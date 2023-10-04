@@ -46,7 +46,7 @@ jobs:
 
         sudo systemctl status mysql
 
-        mysql -u root -p"Yash@2809" -e "CREATE DATABASE  database_development;"
+        mysql -u root -p"root" -e "CREATE DATABASE  database_development;"
 
  
 
