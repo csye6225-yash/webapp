@@ -45,7 +45,10 @@ jobs:
         sudo systemctl start mysql
 
         sudo systemctl status mysql
-
+        mysql -u root -p"root"
+        ALTER USER 'root'@'localhost' IDENTIFIED BY 'Yash@2809';
+        FLUSH PRIVILEGES;
+        exit;
         mysql -u root -p"Yash@2809" -e "CREATE DATABASE  database_development;"
 
  
