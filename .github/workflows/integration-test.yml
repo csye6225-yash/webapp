@@ -55,7 +55,9 @@ jobs:
  
 
     - name: Run Tests
-      run : npm test
+      run : |
+        npx sequelize db:migrate
+        npm test
 
     
 
