@@ -15,17 +15,25 @@ const csvData = require('./controllers/csvData.js');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// const checkDbConnectionMiddleware = async (req, res, next) => {
-//   try {
-//     await sequelize.authenticate();
-//     next(); // Proceed to the next middleware or route if the database is connected
-//   } catch (error) {
-//     console.error('Database connection error:', error);
-//     res.status(503).json({ message: 'Service Unavailable' });
-//   }
-// };
-// // Apply the checkDbConnectionMiddleware to all routes
-// app.use(checkDbConnectionMiddleware);
+app.use('/', (req, res, next) => {
+  if (req.method == 'PATCH') {
+    res.status(405).json();
+  } else {
+    next();
+  }
+});
+
+const checkDbConnectionMiddleware = async (req, res, next) => {
+  try {
+    await sequelize.authenticate();
+    next(); // Proceed to the next middleware or route if the database is connected
+  } catch (error) {
+    console.error('Database connection error:', error);
+    res.status(503).json({ message: 'Service Unavailable' });
+  }
+};
+// Apply the checkDbConnectionMiddleware to all routes
+app.use(checkDbConnectionMiddleware);
 
 // Adding no cache header
 app.use((req, res, next) => {
@@ -46,7 +54,6 @@ const checkConnection = async() => {
 }
 
 checkConnection();
-
 
 
 app.use("/healthz", health_route);
