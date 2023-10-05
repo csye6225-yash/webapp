@@ -41,7 +41,7 @@ const addCSVtoDB = async () => {
         // If the account already exists, do nothing
       }
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
 };
   

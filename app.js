@@ -23,12 +23,13 @@ app.use('/', (req, res, next) => {
   }
 });
 
+
 const checkDbConnectionMiddleware = async (req, res, next) => {
   try {
     await sequelize.authenticate();
     next(); // Proceed to the next middleware or route if the database is connected
   } catch (error) {
-    console.error('Database connection error:', error);
+    //console.error('Database connection error:', error);
     res.status(503).json({ message: 'Service Unavailable' });
   }
 };
@@ -61,6 +62,8 @@ app.use("/v1/assignments", assignment_route);
 app.use('/*', (req, res) => {
   res.status(404).json()
 });
+
+
 app.listen(PORT, async() => {
   console.log(`Server is running on port ${PORT}`);
 });

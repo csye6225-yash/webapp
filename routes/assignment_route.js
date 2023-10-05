@@ -81,6 +81,17 @@ router.post('/', authenticate, async (req, res) => {
     if (isNaN(points) || points < 1 || points > 10) {
       return res.status(400).json({ error: 'Points must be between 1 and 10' });
     }
+
+    // Check if num_of_attempts is less than 1
+    if (isNaN(num_of_attempts) || num_of_attempts < 1) {
+      return res.status(400).json({ error: 'num_of_attempts must be at least 1' });
+    }
+
+    // Validate the 'deadline' as a date
+    const deadlineDate = new Date(deadline);
+    if (isNaN(deadlineDate)) {
+      return res.status(400).json({ error: 'Invalid date format for deadline' });
+    }
   
       // Create the assignment in the database
       const assignment = await db.Assignment.create({
@@ -145,6 +156,12 @@ router.delete('/:id', authenticate, async (req, res) => {
     const assignmentId = req.params.id;
     const accountId = req.user.id; // Get the ID of the authenticated user
 
+    const assignment1 = await db.Assignment.findOne({ where: { id: assignmentId } });
+  
+      if (!assignment1) {
+        return res.status(404).json({ error: 'Assignment not found' });
+      }
+
     // Check if the assignment exists and is associated with the authenticated user
     const assignment = await db.Assignment.findOne({
       where: { id: assignmentId },
@@ -178,6 +195,12 @@ router.put('/:id', authenticate, async (req, res) => {
     const assignmentId = req.params.id;
     const accountId = req.user.id; // Get the ID of the authenticated user
 
+    const assignment1 = await db.Assignment.findOne({ where: { id: assignmentId } });
+  
+      if (!assignment1) {
+        return res.status(404).json({ error: 'Assignment not found' });
+      }
+
     // Find the assignment by ID and ensure it's associated with the authenticated user
     const assignment = await db.Assignment.findOne({
       where: { id: assignmentId }, // Check both assignment ID and accountId
@@ -205,6 +228,17 @@ router.put('/:id', authenticate, async (req, res) => {
     // Validate the points field (between 1 and 10)
     if (isNaN(points) || points < 1 || points > 10) {
       return res.status(400).json({ error: 'Points must be between 1 and 10' });
+    }
+
+    // Check if num_of_attempts is less than 1
+    if (isNaN(num_of_attempts) || num_of_attempts < 1) {
+      return res.status(400).json({ error: 'num_of_attempts must be at least 1' });
+    }
+
+    // Validate the 'deadline' as a date
+    const deadlineDate = new Date(deadline);
+    if (isNaN(deadlineDate)) {
+      return res.status(400).json({ error: 'Invalid date format for deadline' });
     }
     
 
