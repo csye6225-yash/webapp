@@ -4,46 +4,14 @@ const basicAuth = require('basic-auth');
 const db = require('../models/index');
 const bcrypt = require('bcrypt');
 
-
-
-
-
-
-// // Middleware for basic authentication using Base64
-// const authenticate = async (req, res, next) => {
-//   const authHeader = req.headers.authorization;
-
-//   if (!authHeader || !authHeader.startsWith('Basic ')) {
-//     return res.status(401).send('Unauthorized');
-//   }
-
-//   // Extract and decode the Base64 credentials
-//   const base64Credentials = authHeader.split(' ')[1];
-//   const credentials = Buffer.from(base64Credentials, 'base64').toString('utf-8');
-//   console.log("credentials---",credentials);
-//   const [email, password] = credentials.split(':');
-
-//   console.log("email------",email);
-//   console.log("pass----",password);
-//   try {
-//     // Check the email and password against your database
-//     const account = await db.Account.findOne({ where: { email, password } });
-
-//     console.log("Account---",account);
-//     if (!account) {
-//       return res.status(403).send('Forbidden');
-//     }
-
-//     // If authentication is successful, store the authenticated user data (e.g., user ID) in req.user
-//     req.user = account;
-
+// // Displaying 405 for patch
+// router.use('/', (req, res, next) => {
+//   if (req.method == 'PATCH') {
+//     res.status(405).json();
+//   } else {
 //     next();
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Internal Server Error' });
 //   }
-// };
-
+// });
 
 
 const authenticate = async (req, res, next) => {
@@ -89,12 +57,11 @@ router.get('/', authenticate, async (req, res) => {
   try {
     // Fetch the list of assignments from your database
     const assignments = await db.Assignment.findAll();
-
-    // Return the list of assignments as JSON
+   // Return the list of assignments as JSON
     res.status(200).json(assignments);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
