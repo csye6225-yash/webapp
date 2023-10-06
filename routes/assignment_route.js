@@ -47,7 +47,7 @@ const authenticate = async (req, res, next) => {
     next();
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(503).json({ error: 'Service Unavailable' });
   }
 };
 
@@ -61,7 +61,7 @@ router.get('/', authenticate, async (req, res) => {
     res.status(200).json(assignments);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(503).json({ error: 'Service Unavailable' });
   }
 });
 
@@ -122,7 +122,7 @@ router.post('/', authenticate, async (req, res) => {
       //console.log("assignment-----:",assignment.id);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(503).json({ error: 'Service Unavailable' });
     }
   });
 
@@ -145,7 +145,7 @@ router.get('/:id', authenticate, async (req, res) => {
       res.status(200).json(assignment);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(503).json({ error: 'Service Unavailable' });
     }
   });
 
@@ -185,7 +185,7 @@ router.delete('/:id', authenticate, async (req, res) => {
     res.status(204).send();
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(503).json({ error: 'Service Unavailable' });
   }
 });
 
@@ -254,7 +254,7 @@ router.put('/:id', authenticate, async (req, res) => {
     res.status(204).send();
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(503).json({ error: 'Service Unavailable' });
   }
 });
 
