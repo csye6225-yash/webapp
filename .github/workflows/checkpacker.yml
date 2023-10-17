@@ -13,7 +13,7 @@ jobs:
       - name: Upload ZIP file
         uses: actions/upload-artifact@v3
         with:
-          name: my-artifact
+          name: Yash_Bhatia_002891499_03.zip
           path: Yash_Bhatia_002891499_03.zip
 
       - name: Run Packer init
