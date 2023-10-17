@@ -22,10 +22,10 @@ jobs:
 
       - name: Build AMI
         run: |
-          packer init ./packer/aws.us-east-1.pkr.hcl
-          packer fmt ./packer/aws.us-east-1.pkr.hcl
-          packer validate ./packer/aws.us-east-1.pkr.hcl
-          packer build ./packer/aws.us-east-1.pkr.hcl
+          packer init ./packer/ami.us-east-1.pkr.hcl
+          packer fmt ./packer/ami.us-east-1.pkr.hcl
+          packer validate ./packer/ami.us-east-1.pkr.hcl
+          packer build ./packer/ami.us-east-1.pkr.hcl
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
