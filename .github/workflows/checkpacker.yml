@@ -9,12 +9,12 @@ jobs:
         uses: actions/checkout@v2
       - name: Create Zip Archive
         run: |
-          zip -r Yash_Bhatia_002891499_03.zip .
+          zip -r Yash_Bhatia_002791499_03.zip .
       - name: Upload ZIP file
         uses: actions/upload-artifact@v3
         with:
-          name: Yash_Bhatia_002891499_03.zip
-          path: Yash_Bhatia_002891499_03.zip
+          name: my-artifact
+          path: Yash_Bhatia_002791499_03.zip
 
       - name: Run Packer init
         run: packer init ./packer/ami.us-east-1.pkr.hcl
