@@ -1,0 +1,37 @@
+name: Build AMI with Packer
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  create-zip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for 30 seconds
+        run: sleep 30
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Download ZIP file
+        uses: actions/download-artifact@v3
+        with:
+          name: my-artifact
+          path: ./
+
+      - name: Build AMI
+        run: |
+          packer init ./packer/aws.us-east-1.pkr.hcl
+          packer fmt ./packer/aws.us-east-1.pkr.hcl
+          packer validate ./packer/aws.us-east-1.pkr.hcl
+          packer build ./packer/aws.us-east-1.pkr.hcl
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+ 
+
+ 
+
+ 
