@@ -14,11 +14,20 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Create Zip Archive
+        run: |
+          zip -r Yash_Bhatia_002791499_03.zip .
+      - name: Upload ZIP file
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: Yash_Bhatia_002791499_03.zip
+
       - name: Download ZIP file
         uses: actions/download-artifact@v3
         with:
           name: my-artifact
-          path: ./Yash_Bhatia_002791499_03.zip
+          path: Yash_Bhatia_002791499_03.zip
 
       - name: Build AMI
         run: |
