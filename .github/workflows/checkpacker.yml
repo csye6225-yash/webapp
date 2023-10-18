@@ -1,4 +1,4 @@
-name: Packer-PR-Checks
+name: Packer-Checks
 on:
   pull_request:
 jobs:
@@ -42,4 +42,4 @@ jobs:
 
       - name: Final checks
         if: ${{ steps.validate-status.outcome == 'success' }}
-        run: echo "All checks passed. Ready to merge."
+        run: echo "All checks passed."
