@@ -29,7 +29,7 @@ sudo mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'yash';FLUSH P
 mkdir ~/Yash_Bhatia_002791499_03
 sudo unzip "/tmp/Yash_Bhatia_002791499_03.zip" -d "/Yash_Bhatia_002791499_03/"
 # sudo chmod 655 "/opt/Yash_Bhatia_002791499_03"
-(cd ~/Yash_Bhatia_002791499_03 && npm ci)
+(cd ~/Yash_Bhatia_002791499_03 && npm install)
 
 sudo apt-get clean
 
