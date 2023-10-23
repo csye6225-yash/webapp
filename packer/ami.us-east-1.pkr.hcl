@@ -5,7 +5,7 @@ packer {
       version = ">= 1.0.0"
     }
   }
-}
+
 
 variable aws_region {
   type    = string
