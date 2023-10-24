@@ -32,7 +32,7 @@ sudo unzip "/tmp/Yash_Bhatia_002791499_03.zip" -d "/Yash_Bhatia_002791499_03/"
 (cd /Yash_Bhatia_002791499_03 && sudo npm install)
 
 # Move systemd service unit file to the correct location
-sudo mv /home/admin/Yash_Bhatia_002791499_03/webappcloud.service /etc/systemd/system/
+sudo mv /Yash_Bhatia_002791499_03/webappcloud.service /etc/systemd/system/
 
 # Enable and start the systemd service
 sudo systemctl enable webappcloud
