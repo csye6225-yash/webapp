@@ -14,22 +14,29 @@ sudo apt-get install -y nodejs npm
 sudo apt-get install npm -y
 
 # Install MariaDB server
-sudo apt-get install -y mariadb-server
+# sudo apt-get install -y mariadb-server
 
-# Start the MariaDB service and enable it
-sudo systemctl start mariadb
-sudo systemctl enable mariadb
+# # Start the MariaDB service and enable it
+# sudo systemctl start mariadb
+# sudo systemctl enable mariadb
 
-# # Secure MariaDB installation
-# sudo mysql_secure_installation -y
+# # # Secure MariaDB installation
+# # sudo mysql_secure_installation -y
 
-sudo mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'yash';FLUSH PRIVILEGES;CREATE DATABASE database_development;"
+# sudo mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'yash';FLUSH PRIVILEGES;CREATE DATABASE database_development;"
 
 sudo apt remove git -y
 mkdir ~/Yash_Bhatia_002791499_03
 sudo unzip "/tmp/Yash_Bhatia_002791499_03.zip" -d "/Yash_Bhatia_002791499_03/"
 # sudo chmod 655 "/opt/Yash_Bhatia_002791499_03"
 (cd /Yash_Bhatia_002791499_03 && sudo npm install)
+
+# Move systemd service unit file to the correct location
+sudo mv /home/admin/Yash_Bhatia_002791499_03/webappcloud.service /etc/systemd/system/
+
+# Enable and start the systemd service
+sudo systemctl enable webappcloud
+sudo systemctl start webappcloud
 
 sudo apt-get clean
 
