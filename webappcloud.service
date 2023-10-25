@@ -7,8 +7,8 @@ After=network.target
 
 [Service]
 Type=simple
-User=yash
-Group=csye6225
+User=admin
+Group=admin
 WorkingDirectory=/Yash_Bhatia_002791499_03
 ExecStart=/usr/bin/node /Yash_Bhatia_002791499_03/app.js
 Restart=always
