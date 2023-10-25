@@ -26,13 +26,19 @@ sudo apt-get install npm -y
 # sudo mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'yash';FLUSH PRIVILEGES;CREATE DATABASE database_development;"
 
 sudo apt remove git -y
-mkdir ~/Yash_Bhatia_002791499_03
-sudo unzip "/tmp/Yash_Bhatia_002791499_03.zip" -d ~/Yash_Bhatia_002791499_03/
+
+sudo groupadd csye6225
+sudo useradd -s /bin/false -g csye6225 -d /opt/csye6225 -m csye6225
+
+mkdir /opt/csye6225/Yash_Bhatia_002791499_03
+sudo unzip "/tmp/Yash_Bhatia_002791499_03.zip" -d /opt/csye6225/Yash_Bhatia_002791499_03/
 # sudo chmod 655 "/opt/Yash_Bhatia_002791499_03"
-(cd ~/Yash_Bhatia_002791499_03 && sudo npm install)
+(cd /opt/csye6225/Yash_Bhatia_002791499_03 && sudo npm install)
+
+
 
 # Move systemd service unit file to the correct location
-sudo mv ~/Yash_Bhatia_002791499_03/webappcloud.service /etc/systemd/system/
+sudo mv /opt/csye6225/Yash_Bhatia_002791499_03/webappcloud.service /etc/systemd/system/
 
 # Enable and start the systemd service
 sudo systemctl enable webappcloud

@@ -1,16 +1,16 @@
 [Unit]
 Description=CSYE 6225 webapp service
-ConditionPathExists=/home/admin/Yash_Bhatia_002791499_03
+ConditionPathExists=/opt/csye6225/Yash_Bhatia_002791499_03
 After=network.target
 
  
 
 [Service]
 Type=simple
-User=admin
-Group=admin
-WorkingDirectory=/home/admin/Yash_Bhatia_002791499_03
-ExecStart=/usr/bin/node /home/admin/Yash_Bhatia_002791499_03/app.js
+User=csye6225
+Group=csye6225
+WorkingDirectory=/opt/csye6225/Yash_Bhatia_002791499_03
+ExecStart=/usr/bin/node /opt/csye6225/Yash_Bhatia_002791499_03/app.js
 Restart=always
 RestartSec=3
 StandardOutput=syslog
@@ -20,4 +20,4 @@ SyslogIdentifier=csye6225
  
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=cloud-init.target
