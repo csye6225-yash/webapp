@@ -35,7 +35,8 @@ sudo unzip "/tmp/Yash_Bhatia_002791499_03.zip" -d /opt/csye6225/Yash_Bhatia_0027
 # sudo chmod 655 "/opt/Yash_Bhatia_002791499_03"
 (cd /opt/csye6225/Yash_Bhatia_002791499_03 && sudo npm install)
 
-
+sudo chown -R csye6225:csye6225 /opt/csye6225/Yash_Bhatia_002791499_03/
+sudo chmod -R 750 /opt/csye6225/Yash_Bhatia_002791499_03/
 
 # Move systemd service unit file to the correct location
 sudo mv /opt/csye6225/Yash_Bhatia_002791499_03/webappcloud.service /etc/systemd/system/
