@@ -1,6 +1,6 @@
 [Unit]
 Description=CSYE 6225 webapp service
-ConditionPathExists=/Yash_Bhatia_002791499_03
+ConditionPathExists=/home/admin/Yash_Bhatia_002791499_03
 After=network.target
 
  
@@ -9,8 +9,8 @@ After=network.target
 Type=simple
 User=admin
 Group=admin
-WorkingDirectory=/Yash_Bhatia_002791499_03
-ExecStart=/usr/bin/node /Yash_Bhatia_002791499_03/app.js
+WorkingDirectory=/home/admin/Yash_Bhatia_002791499_03
+ExecStart=/usr/bin/node /home/admin/Yash_Bhatia_002791499_03/app.js
 Restart=always
 RestartSec=3
 StandardOutput=syslog
