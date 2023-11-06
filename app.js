@@ -10,10 +10,26 @@ const assignment_route = require('./routes/assignment_route.js');
 const fs = require("fs");
 const csv = require("fast-csv");
 const csvData = require('./controllers/csvData.js');
+const StatsD = require('statsd-client')
 
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Middleware for instrumenting APIs
+const statsd = new StatsD({ host: 'localhost', port: 8125 });
+const apiInstrumentation = (req, res, next) => {
+    const apiEndpoint = req.originalUrl.startsWith('/v1')
+    ? req.originalUrl.split('/v1')[1]
+    : req.originalUrl;
+    // Increment the API counter using node-statsd
+    statsd.increment('api_requests_total', 1, { endpoint: apiEndpoint, method: req.method });
+    console.log('statsd', statsd);
+    next();
+}
+ 
+// Apply the middleware to all routes
+app.use(apiInstrumentation);
 
 app.use('/', (req, res, next) => {
   if (req.method == 'PATCH') {
