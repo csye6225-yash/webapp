@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const { sequelize } = require('../models/index.js');
+const logger = require('../logger.js');
 
 //Displaying 405 for patch, delete, post, put requests
 router.use('/', (req, res, next) => {
@@ -24,6 +25,9 @@ router.use('/', (req, res, next) => {
             res.status(400).json();
         }
         await sequelize.authenticate();
+        logger.info('/healthz: This is an info message.');
+        logger.warn('/healthz: This is a warning message.');
+        logger.error('/healthz: This is an error message.');
         res.status(200).json();
         // else{
         //     res.status(200).json();
