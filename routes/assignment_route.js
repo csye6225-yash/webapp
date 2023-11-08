@@ -3,6 +3,9 @@ const router = express.Router();
 const basicAuth = require('basic-auth');
 const db = require('../models/index');
 const bcrypt = require('bcrypt');
+const logger = require('../logger.js');
+const StatsD = require('node-statsd');
+const client = new StatsD();
 
 // // Displaying 405 for patch
 // router.use('/', (req, res, next) => {
@@ -57,10 +60,12 @@ router.get('/', authenticate, async (req, res) => {
   try {
     // Fetch the list of assignments from your database
     const assignments = await db.Assignment.findAll();
+    logger.info('List of assignments');
    // Return the list of assignments as JSON
     res.status(200).json(assignments);
   } catch (error) {
     console.error(error);
+    logger.error('Database is not connected');
     res.status(503).json({ error: 'Service Unavailable' });
   }
 });
@@ -118,10 +123,12 @@ router.post('/', authenticate, async (req, res) => {
       });
   
       // Return a success response with the created assignment
+      logger.info('Assignment Created');
       res.status(201).json(assignment);
       //console.log("assignment-----:",assignment.id);
     } catch (error) {
       console.error(error);
+      logger.error('Service Unavailable');
       res.status(503).json({ error: 'Service Unavailable' });
     }
   });
@@ -142,9 +149,11 @@ router.get('/:id', authenticate, async (req, res) => {
       }
   
       // Return the assignment details in the response
+      logger.info('Requested assignment by ID');
       res.status(200).json(assignment);
     } catch (error) {
       console.error(error);
+      logger.error('Service Unavailable');
       res.status(503).json({ error: 'Service Unavailable' });
     }
   });
@@ -182,9 +191,11 @@ router.delete('/:id', authenticate, async (req, res) => {
     await assignment.destroy();
 
     // Return a success response with no content (204 No Content)
+    logger.info('Assignment Deleted');
     res.status(204).send();
   } catch (error) {
     console.error(error);
+    logger.error('Service Unavailable');
     res.status(503).json({ error: 'Service Unavailable' });
   }
 });
@@ -251,9 +262,11 @@ router.put('/:id', authenticate, async (req, res) => {
     });
 
     // Return a success response with no content (204 No Content)
+    logger.info('Assignment Updated');
     res.status(204).send();
   } catch (error) {
     console.error(error);
+    logger.error('Service Unavailable');
     res.status(503).json({ error: 'Service Unavailable' });
   }
 });

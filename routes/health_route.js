@@ -1,10 +1,13 @@
 const router = require("express").Router();
 const { sequelize } = require('../models/index.js');
 const logger = require('../logger.js');
+const StatsD = require('node-statsd');
+const client = new StatsD();
 
 //Displaying 405 for patch, delete, post, put requests
 router.use('/', (req, res, next) => {
     if (req.method !== 'GET') {
+      logger.warn('/healthz: this method is not allowed')
       res.status(405).json();
     } else {
       next();
@@ -25,9 +28,8 @@ router.use('/', (req, res, next) => {
             res.status(400).json();
         }
         await sequelize.authenticate();
-        logger.info('/healthz: This is an info message.');
-        logger.warn('/healthz: This is a warning message.');
-        logger.error('/healthz: This is an error message.');
+        client.increment("healthz", 1);
+        logger.info('/healthz: Application Health Successful.');
         res.status(200).json();
         // else{
         //     res.status(200).json();
@@ -36,6 +38,7 @@ router.use('/', (req, res, next) => {
     } catch (error) {
       //if database connection is shut off, throwing 503
       console.error('Database connection error');
+      logger.error('Database is not connected');
       res.status(503).json(); //res.status(503).json();
     }
   });
