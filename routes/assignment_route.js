@@ -60,6 +60,7 @@ router.get('/', authenticate, async (req, res) => {
   try {
     // Fetch the list of assignments from your database
     const assignments = await db.Assignment.findAll();
+    client.increment("AllAssignments", 1);
     logger.info('List of assignments');
    // Return the list of assignments as JSON
     res.status(200).json(assignments);
@@ -123,6 +124,7 @@ router.post('/', authenticate, async (req, res) => {
       });
   
       // Return a success response with the created assignment
+      client.increment("AssignmentPost", 1);
       logger.info('Assignment Created');
       res.status(201).json(assignment);
       //console.log("assignment-----:",assignment.id);
@@ -149,6 +151,7 @@ router.get('/:id', authenticate, async (req, res) => {
       }
   
       // Return the assignment details in the response
+      client.increment("AssignmentsId", 1);
       logger.info('Requested assignment by ID');
       res.status(200).json(assignment);
     } catch (error) {
@@ -191,6 +194,7 @@ router.delete('/:id', authenticate, async (req, res) => {
     await assignment.destroy();
 
     // Return a success response with no content (204 No Content)
+    client.increment("AssignmentDelete", 1);
     logger.info('Assignment Deleted');
     res.status(204).send();
   } catch (error) {
@@ -262,6 +266,7 @@ router.put('/:id', authenticate, async (req, res) => {
     });
 
     // Return a success response with no content (204 No Content)
+    client.increment("AssignmentUpdate", 1);
     logger.info('Assignment Updated');
     res.status(204).send();
   } catch (error) {
