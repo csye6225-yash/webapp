@@ -1,5 +1,4 @@
 const winston = require('winston');
-//const WinstonCloudWatch = require('winston-cloudwatch');
  
 // Define the log format
 const logFormat = winston.format.combine(
@@ -11,7 +10,6 @@ const logFormat = winston.format.combine(
 const logger = winston.createLogger({
   level: 'info', // Minimum log level to capture
   format: logFormat,
-//   defaultMeta: { service: 'your-service-name' }, // Customize service name
   transports: [
     // Log 'info' and above messages to a file
     new winston.transports.File({
