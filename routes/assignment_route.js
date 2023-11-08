@@ -21,6 +21,7 @@ const authenticate = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Basic ')) {
+    logger.warn('Unauthorized Access');
     return res.status(401).send('Unauthorized');
   }
 
@@ -34,6 +35,7 @@ const authenticate = async (req, res, next) => {
     const account = await db.Account.findOne({ where: { email } });
 
     if (!account) {
+      logger.warn('Unauthorized Access');
       return res.status(401).send('Unauthorized');
     }
 
@@ -41,6 +43,7 @@ const authenticate = async (req, res, next) => {
     const passwordMatch = await bcrypt.compare(password, account.password);
 
     if (!passwordMatch) {
+      logger.warn('Unauthorized Access');
       return res.status(401).send('Unauthorized');
     }
 
@@ -50,6 +53,7 @@ const authenticate = async (req, res, next) => {
     next();
   } catch (error) {
     console.error(error);
+    logger.error('Service Unavailable');
     res.status(503).json({ error: 'Service Unavailable' });
   }
 };
@@ -80,22 +84,26 @@ router.post('/', authenticate, async (req, res) => {
   
       // Validate request body
       if (!name || !points || !num_of_attempts || !deadline) {
+        logger.warn('Bad Request: Incomplete Body');
         return res.status(400).json({ error: 'Bad Request' });
       }
 
       // Validate the points field (between 1 and 10)
     if (isNaN(points) || points < 1 || points > 10) {
+      logger.warn('Points must be between 1 and 10');
       return res.status(400).json({ error: 'Points must be between 1 and 10' });
     }
 
     // Check if num_of_attempts is less than 1
     if (isNaN(num_of_attempts) || num_of_attempts < 1) {
+      logger.warn('num_of_attempts must be at least 1');
       return res.status(400).json({ error: 'num_of_attempts must be at least 1' });
     }
 
     // Validate the 'deadline' as a date
     const deadlineDate = new Date(deadline);
     if (isNaN(deadlineDate)) {
+      logger.warn('Invalid date format for deadline');
       return res.status(400).json({ error: 'Invalid date format for deadline' });
     }
   
@@ -147,6 +155,7 @@ router.get('/:id', authenticate, async (req, res) => {
       const assignment = await db.Assignment.findOne({ where: { id: assignmentId } });
   
       if (!assignment) {
+        logger.warn('Assignment not found');
         return res.status(404).json({ error: 'Assignment not found' });
       }
   
@@ -171,6 +180,7 @@ router.delete('/:id', authenticate, async (req, res) => {
     const assignment1 = await db.Assignment.findOne({ where: { id: assignmentId } });
   
       if (!assignment1) {
+        logger.warn('Assignment not found');
         return res.status(404).json({ error: 'Assignment not found' });
       }
 
@@ -187,6 +197,7 @@ router.delete('/:id', authenticate, async (req, res) => {
     });
 
     if (!assignment) {
+      logger.warn('Forbidden access for this account');
       return res.status(403).json({ error: 'forbidden' });
     }
 
@@ -213,6 +224,7 @@ router.put('/:id', authenticate, async (req, res) => {
     const assignment1 = await db.Assignment.findOne({ where: { id: assignmentId } });
   
       if (!assignment1) {
+        logger.warn('Assignment not found');
         return res.status(404).json({ error: 'Assignment not found' });
       }
 
@@ -229,6 +241,7 @@ router.put('/:id', authenticate, async (req, res) => {
     });
 
     if (!assignment) {
+      logger.warn('Forbidden access for this account');
       return res.status(403).json({ error: 'Forbidden' });
     }
 
@@ -237,22 +250,26 @@ router.put('/:id', authenticate, async (req, res) => {
 
     // Validate request body
     if (!name || !points || !num_of_attempts || !deadline) {
+      logger.warn('Bad Request: Incomplete Body');
       return res.status(400).json({ error: 'Bad Request' });
     }
 
     // Validate the points field (between 1 and 10)
     if (isNaN(points) || points < 1 || points > 10) {
+      logger.warn('Points must be between 1 and 10');
       return res.status(400).json({ error: 'Points must be between 1 and 10' });
     }
 
     // Check if num_of_attempts is less than 1
     if (isNaN(num_of_attempts) || num_of_attempts < 1) {
+      logger.warn('num_of_attempts must be at least 1');
       return res.status(400).json({ error: 'num_of_attempts must be at least 1' });
     }
 
     // Validate the 'deadline' as a date
     const deadlineDate = new Date(deadline);
     if (isNaN(deadlineDate)) {
+      logger.warn('Invalid date format for deadline');
       return res.status(400).json({ error: 'Invalid date format for deadline' });
     }
     
