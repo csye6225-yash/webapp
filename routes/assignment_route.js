@@ -6,6 +6,15 @@ const bcrypt = require('bcrypt');
 const logger = require('../logger.js');
 const StatsD = require('node-statsd');
 const client = new StatsD();
+const AWS = require('aws-sdk');
+
+
+AWS.config.update({
+  region: 'us-east-1', // Replace with your AWS region
+  // accessKeyId: 'your-access-key-id', // Replace with your AWS access key ID
+  // secretAccessKey: 'your-secret-access-key', // Replace with your AWS secret access key
+});
+const sns = new AWS.SNS();
 
 // // Displaying 405 for patch
 // router.use('/', (req, res, next) => {
@@ -286,6 +295,104 @@ router.put('/:id', authenticate, async (req, res) => {
     client.increment("AssignmentUpdate", 1);
     logger.info('Assignment Updated');
     res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    logger.error('Service Unavailable');
+    res.status(503).json({ error: 'Service Unavailable' });
+  }
+});
+
+// Route to submit an assignment
+router.post('/:id/submission', authenticate, async (req, res) => {
+  try {
+    const assignmentId = req.params.id;
+    const accountId = req.user.id; // Get the ID of the authenticated user
+
+    // Check if the assignment exists and is associated with the authenticated user
+    const assignment = await db.Assignment.findOne({
+      where: { id: assignmentId },
+      include: [
+        {
+          model: db.Account,
+          as: 'users', // This assumes that you have defined 'as: users' in your Assignment model
+          where: { id: accountId }, // Check if the assignment is associated with the authenticated user
+        },
+      ],
+    });
+
+    if (!assignment) {
+      logger.warn('Forbidden access for this account or Assignment not found');
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    // Check if the deadline has passed
+    const currentDate = new Date();
+    if (currentDate > assignment.deadline) {
+      logger.warn('Submission deadline has passed');
+      return res.status(400).json({ error: 'Submission deadline has passed' });
+    }
+
+    // Check if the user has exceeded the number of attempts
+    const userAttempts = await db.submission.count({
+      where: { assignment_id: assignmentId },
+      // where: { assignment_id: assignmentId, submitted_by: accountId },
+    });
+
+    if (userAttempts >= assignment.num_of_attempts) {
+      logger.warn('Exceeded number of submission attempts');
+      return res.status(400).json({ error: 'Exceeded number of submission attempts' });
+    }
+
+    // Extract submission data from the request body
+    const { submission_url } = req.body;
+
+    // Validate request body
+    if (!submission_url) {
+      logger.warn('Bad Request: Incomplete Body');
+      return res.status(400).json({ error: 'Bad Request' });
+    }
+
+    // Post URL to SNS topic along with user info
+    const snsMessage = {
+      email: req.user.email, // Assuming your user model has an email field
+      submission_url,
+    };
+
+    const snsParams = {
+      Message: JSON.stringify(snsMessage),
+      //TopicArn: 'arn:aws:sns:us-east-1:014622572805:mySNSTopic-c28d63c', // Replace with your SNS topic ARN
+      TopicArn: process.env.SNS_TOPIC_ARN,
+    };
+
+    sns.publish(snsParams, (err, data) => {
+      if (err) {
+        console.error('Error publishing to SNS:', err);
+        logger.error('Error publishing to SNS');
+        return res.status(500).json({ error: 'Error publishing to SNS' });
+      }
+
+      // Create the submission in the database if SNS is successful
+      db.submission.create({
+        assignment_id: assignmentId,
+        submission_url,
+      });
+
+      // Return a success response with the created submission
+      client.increment('SubmissionPost', 1);
+      logger.info('Submission Created');
+      res.status(201).json({ message: 'Submission created successfully' });
+    });
+
+    // // Create the submission in the database
+    // const submission = await db.submission.create({
+    //   assignment_id: assignmentId,
+    //   submission_url,
+    // });
+
+    // // Return a success response with the created submission
+    // client.increment("SubmissionPost", 1);
+    // logger.info('Submission Created');
+    // res.status(201).json(submission);
   } catch (error) {
     console.error(error);
     logger.error('Service Unavailable');
