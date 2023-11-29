@@ -367,7 +367,7 @@ router.post('/:id/submission', authenticate, async (req, res) => {
     sns.publish(snsParams, (err, data) => {
       if (err) {
         console.error('Error publishing to SNS:', err);
-        logger.error('Error publishing to SNS');
+        logger.error('Error publishing to SNS',err);
         return res.status(500).json({ error: 'Error publishing to SNS' });
       }
 
@@ -395,7 +395,7 @@ router.post('/:id/submission', authenticate, async (req, res) => {
     // res.status(201).json(submission);
   } catch (error) {
     console.error(error);
-    logger.error('Service Unavailable');
+    logger.error('Service Unavailable',error);
     res.status(503).json({ error: 'Service Unavailable' });
   }
 });
