@@ -372,6 +372,8 @@ router.post('/:id/submission', authenticate, async (req, res) => {
     const snsMessage = {
       email: req.user.email, // Assuming your user model has an email field
       submission_url,
+      assignmentId,
+      accountId,
     };
 
     const snsParams = {
