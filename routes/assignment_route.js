@@ -210,6 +210,17 @@ router.delete('/:id', authenticate, async (req, res) => {
       return res.status(403).json({ error: 'forbidden' });
     }
 
+    // Check if the submission is present so dont allow to delete
+    const userAttempts = await db.submission.count({
+      where: { assignment_id: assignmentId },
+      // where: { assignment_id: assignmentId, submitted_by: accountId },
+    });
+
+    if (userAttempts > 0) {
+      logger.warn('Cannot delete this assignment as there are submissions against it');
+      return res.status(400).json({ error: 'Cannot delete this assignment as there are submissions against it' });
+    }
+
     // Delete the assignment
     await assignment.destroy();
 
@@ -311,18 +322,23 @@ router.post('/:id/submission', authenticate, async (req, res) => {
     // Check if the assignment exists and is associated with the authenticated user
     const assignment = await db.Assignment.findOne({
       where: { id: assignmentId },
-      include: [
-        {
-          model: db.Account,
-          as: 'users', // This assumes that you have defined 'as: users' in your Assignment model
-          where: { id: accountId }, // Check if the assignment is associated with the authenticated user
-        },
-      ],
+      // include: [
+      //   {
+      //     model: db.Account,
+      //     as: 'users', // This assumes that you have defined 'as: users' in your Assignment model
+      //     where: { id: accountId }, // Check if the assignment is associated with the authenticated user
+      //   },
+      // ],
     });
 
+    // if (!assignment) {
+    //   logger.warn('Forbidden access for this account or Assignment not found');
+    //   return res.status(403).json({ error: 'Forbidden' });
+    // }
+
     if (!assignment) {
-      logger.warn('Forbidden access for this account or Assignment not found');
-      return res.status(403).json({ error: 'Forbidden' });
+      logger.warn('Assignment not found.');
+      return res.status(404).json({ error: 'Assignment not found.' });
     }
 
     // Check if the deadline has passed
