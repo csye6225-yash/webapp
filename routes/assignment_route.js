@@ -350,7 +350,7 @@ router.post('/:id/submission', authenticate, async (req, res) => {
 
     // Check if the user has exceeded the number of attempts
     const userAttempts = await db.submission.count({
-      where: { assignment_id: assignmentId },
+      where: { assignment_id: assignmentId, account_id: accountId },
       // where: { assignment_id: assignmentId, submitted_by: accountId },
     });
 
@@ -393,6 +393,7 @@ router.post('/:id/submission', authenticate, async (req, res) => {
       db.submission.create({
         assignment_id: assignmentId,
         submission_url,
+        account_id: accountId,
       });
 
       // Return a success response with the created submission
