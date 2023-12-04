@@ -80,7 +80,7 @@ checkConnection();
 
 
 
-app.use("/v1/assignments", assignment_route);
+app.use("/v2/assignments", assignment_route);
 app.use('/*', (req, res) => {
   res.status(404).json()
 });
