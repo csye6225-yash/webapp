@@ -34,22 +34,30 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Create Launch Template Version
+      - name: Setup demo credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID_DEMO}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY_DEMO}}
+          aws-region: us-east-1
+      - name: Install AWS CLI
         run: |
-          latest_ami_id=$(aws ec2 describe-images --filters "Name=name,Values=YourAMIName" --query 'Images | [0].ImageId' --output text)
-          aws ec2 create-launch-template-version --launch-template-name YourLaunchTemplateName --version-description "New version with latest AMI" --source-version $latest_ami_id
-
-      - name: Issue Instance Refresh
+          sudo apt-get update
+          sudo apt-get install -y awscli
+      - name: Get latest ami id
         run: |
-          aws autoscaling start-instance-refresh --auto-scaling-group-name YourAutoScalingGroupName --preferences "MinHealthyPercentage=100,InstanceWarmup=300"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEMO }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}
-
-      - name: Wait for Instance Refresh
+          LATEST_AMI_ID=$(aws ec2 describe-images --filters "Name=state,Values=available" --query 'sort_by(Images, &CreationDate)[-1].ImageId' --output text)
+          echo "LATEST_AMI_ID=$LATEST_AMI_ID" >> $GITHUB_ENV
+      - name: Get latest launch template id
         run: |
-          status=""
-          while [[ "$status" != "Successful" ]]; do
-            sleep 60
-            status=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name YourAutoScalingGroupName --query 'InstanceRefreshes[0].Status' --output text)
-          done
+          LATEST_LT_ID=$(aws ec2 describe-launch-templates --query 'sort_by(LaunchTemplates, &CreateTime)[-1].LaunchTemplateId' --output text)
+          echo "LATEST_LT_ID=$LATEST_LT_ID" >> $GITHUB_ENV
+      - name: Get latest launch template version
+        run: |
+          LATEST_VERSION=$(aws ec2 describe-launch-templates --launch-template-ids $LATEST_LT_ID --query 'LaunchTemplates[0].LatestVersionNumber' --output text)
+          echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
+      - run: |
+          echo "{"ImageId":\"$LATEST_AMI_ID\"}"
+          echo $LATEST_AMI_ID
+      - name: Create a new version of the Launch Template
+        run: aws ec2 create-launch-template-version --launch-template-id $LATEST_LT_ID --source-version $LATEST_VERSION --launch-template-data {\"ImageId\":\"$LATEST_AMI_ID\"}
