@@ -61,5 +61,9 @@ jobs:
           echo $LATEST_AMI_ID
       - name: Create a new version of the Launch Template
         run: aws ec2 create-launch-template-version --launch-template-id $LATEST_LT_ID --source-version $LATEST_VERSION --launch-template-data "{\"ImageId\":\"$LATEST_AMI_ID\"}"
+      - name: Get Auto Scaling Group Name
+        run: |
+          ASG_NAME=$(aws autoscaling describe-auto-scaling-groups --query "AutoScalingGroups[0].AutoScalingGroupName" --output text)
+          echo "ASG_NAME=$ASG_NAME" >> $GITHUB_ENV
       - name: Start instance fresh
-        run: aws autoscaling start-instance-refresh --auto-scaling-group-name myAutoScalingGroup-3100535
+        run: aws autoscaling start-instance-refresh --auto-scaling-group-name $ASG_NAME
