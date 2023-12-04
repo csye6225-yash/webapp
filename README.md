@@ -1,5 +1,5 @@
 # webapp
-Assignment 3.
+Assignment
 
 Prerequisites:
 1. Node JS
