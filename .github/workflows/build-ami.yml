@@ -61,3 +61,5 @@ jobs:
           echo $LATEST_AMI_ID
       - name: Create a new version of the Launch Template
         run: aws ec2 create-launch-template-version --launch-template-id $LATEST_LT_ID --source-version $LATEST_VERSION --launch-template-data "{\"ImageId\":\"$LATEST_AMI_ID\"}"
+      - name: Start instance fresh
+        run: aws autoscaling start-instance-refresh --auto-scaling-group-name myAutoScalingGroup
